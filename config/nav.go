@@ -41,6 +41,7 @@ func initNav() {
 						{Name: "Banners", Slug: "banners"},
 						{Name: "Connections", Slug: "connections"},
 						{Name: "Sessions", Slug: "sessions"},
+						{Name: "Page Settings", Slug: "page-settings"},
 					},
 				},
 				group("Manage Data", "page", "Export Data", "Delete Account"),

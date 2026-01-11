@@ -235,6 +235,17 @@
                     </form>
     {{ end }}
     </table>
+{{ else if eq .Title "Settings: Page Settings" }}
+    <form method=post>
+
+            {{ range .AllSettings }}
+                <h2>{{ .Name }}</h2>
+                {{ template "settings" . }}
+                <hr>
+            {{ end }}
+
+        <p><button class="btn green">Save Changes</button>
+    </form>
 {{ end }}
 </main>
 

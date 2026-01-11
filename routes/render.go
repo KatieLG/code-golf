@@ -21,6 +21,12 @@ func init() {
 	_, dev = os.LookupEnv("DEV")
 }
 
+type SettingsGroup struct {
+	Name	 string
+	Settings []*config.Setting
+	Golfer   *golfer.Golfer
+}
+
 func render(w http.ResponseWriter, r *http.Request, name string, data ...any) {
 	theme := "auto"
 	theGolfer := session.Golfer(r)
@@ -46,6 +52,7 @@ func render(w http.ResponseWriter, r *http.Request, name string, data ...any) {
 		Nav                                *config.Navigaton
 		Request                            *http.Request
 		Settings                           []*config.Setting
+		AllSettings						   map[string]SettingsGroup
 	}{
 		Banners:     banners(theGolfer),
 		Cheevos:     config.CheevoTree,
@@ -64,6 +71,7 @@ func render(w http.ResponseWriter, r *http.Request, name string, data ...any) {
 		Settings:    config.Settings[strings.TrimSuffix(name, "-tabs")],
 		Theme:       theme,
 		Title:       "Code Golf",
+		AllSettings: make(map[string]SettingsGroup),
 	}
 
 	// Mapping lang & hole IDs to a list of known names (the first is the primary one)
@@ -160,6 +168,18 @@ func render(w http.ResponseWriter, r *http.Request, name string, data ...any) {
 
 		// TODO State is a token to protect the user from CSRF attacks.
 		args.LogInURL = config.AuthCodeURL("")
+	}
+
+	for slug, settings := range config.Settings {
+		if slug == "golfer/code-search" {
+			continue
+		}
+		title := slug[strings.LastIndex(slug, "/")+1:]
+		args.AllSettings[slug] = SettingsGroup{
+			Name:     strings.ToUpper(title[:1]) + title[1:],
+			Settings: settings,
+			Golfer:   theGolfer,
+		}
 	}
 
 	if err := views.Render(w, name, args); err != nil {
